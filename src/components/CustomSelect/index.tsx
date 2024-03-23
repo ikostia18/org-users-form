@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Select, FormControl, InputLabel, MenuItem, Radio, SelectChangeEvent } from '@mui/material';
+import { Select, FormControl, InputLabel, MenuItem, Radio, SelectChangeEvent, Box } from '@mui/material';
 import { styled as muiStyled } from '@mui/material/styles';
 import { SelectItem } from '../../utils/types';
 
@@ -30,7 +30,11 @@ const CustomSelect: FC<CustomSelectProps> = ({ label, value, items, onChange, wi
                 value={value}
                 label={'Organization'}
                 onChange={onChange}
-                renderValue={() => label}
+                renderValue={() => (
+                    <Box sx={{ textAlign: 'left', width: '100%' }}>
+                        {label}
+                    </Box>
+                )}
             >
                 {items.map((org) => (
                     <MenuItem key={org.id} value={org.id}>

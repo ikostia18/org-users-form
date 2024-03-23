@@ -1,5 +1,5 @@
-import React from 'react';
-import { Autocomplete, AutocompleteRenderOptionState, Checkbox, TextField } from '@mui/material';
+import React, { useState } from 'react';
+import { Autocomplete, AutocompleteRenderInputParams, AutocompleteRenderOptionState, Box, Checkbox, TextField } from '@mui/material';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { SelectItem } from '../../utils/types';
@@ -25,8 +25,6 @@ interface StyledWrapperProps {
   width?: string;
 }
 
-// TODO: add the number of selected with the search option
-
 const MultiSelect: React.FC<MultiSelectProps> = ({
   items,
   label,
@@ -34,6 +32,38 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   onChange,
   width,
 }) => {
+
+  const [isTyping, setIsTyping] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+
+  const renderInput = (params: AutocompleteRenderInputParams) => {
+    return (
+      <TextField
+        {...params}
+        label={'Users'}
+        value={label}
+        onChange={
+          ({ target }) => {
+            setIsTyping(target.value.length > 0);
+          }
+        } />
+    );
+  };
+
+  const renderTags = (value: SelectItem[]) => {
+    return (
+      <Box sx={{ marginLeft: '10px' }}>
+        {`${value.length} selected`} {isFocused || isTyping ? '|' : ''}
+      </Box>
+    );
+  };
+
+  const onChangeHandler = (newValue: SelectItem[]) => {
+    onChange(newValue);
+
+    setIsTyping(false);
+    setIsFocused(false);
+  };
 
   // *** 1st APPROACH AND MORE ELEGANT TO HANDLE PERFORMANCE ISSUES ***
   // const filterOptions = createFilterOptions({
@@ -57,7 +87,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
         ListboxComponent={ListboxComponent}
         PopperComponent={StyledPopper}
 
-        // renderOption returns new type to handle the react-window adapter 
+        // renderOption returns new type to handle the react-window adapter
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
         renderOption={(props, option, { inputValue, index, selected }: AutocompleteRenderOptionState) => {
@@ -87,7 +117,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
 
           return [props, optionToReturn, index];
 
-          // WITHOUT REACT WINDOW + REMOVE ListboxComponent & PopperComponent 
+          // WITHOUT REACT WINDOW + REMOVE ListboxComponent & PopperComponent
           // return (
           //   <li {...props}>
           //     <div>
@@ -113,10 +143,11 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
         }}
 
         value={selectedItems}
-        onChange={(event, newValue) => onChange(newValue)}
-        renderInput={(params) => (
-          <TextField {...params} label={label} />
-        )}
+        onChange={(_event, newValue) => onChangeHandler(newValue)}
+        renderInput={renderInput}
+        renderTags={renderTags}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
       />
     </StyledWrapper>
   );
