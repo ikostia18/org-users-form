@@ -109,7 +109,7 @@ const Modal = forwardRef(({ onClose, children }: ModalProps, ref) => {
   }, [isClosing, onClose]);
 
   return (
-    <ModalBackdrop onClick={handleClose} isClosing={isClosing}>
+    <ModalBackdrop onClick={handleClose} isClosing={isClosing} data-testid="modal-backdrop">
       <ModalContainer onClick={(e: { stopPropagation: () => unknown; }) => e.stopPropagation()} isClosing={isClosing}>
 
         <CloseButton onClick={handleClose}>X</CloseButton>

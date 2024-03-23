@@ -12,6 +12,7 @@ A React web application initialized with Vite and TypeScript, focusing on subscr
 ## Getting Started
 Prerequisites: Node.js and a basic understanding of React.
 
-- Clone the repo: `git clone https://your-repository-url.git`
+- Clone the repo: `git clone https://github.com/ikostia18/org-users-form`
 - Install dependencies: `npm install`
 - Run the application: `npm run dev` - The app runs on http://localhost:5173.
+- Run tests: `npm run test` - This command will invoke Jest.

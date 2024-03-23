@@ -75,7 +75,7 @@ const NavBar = () => {
         <CompanyName>S Corporation</CompanyName>
       </LogoAndNameContainer>
 
-      {title && <PageTitle>{title}</PageTitle>}
+      {title && <PageTitle>{title()}</PageTitle>}
 
       <NavLinkContainer>
         <NavLink to="/">Home</NavLink>

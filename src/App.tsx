@@ -5,9 +5,6 @@ import HomePage from './pages/HomePage';
 import SubscribePage from './pages/SubscribePage';
 import ErrorPage from './pages/ErrorPage';
 
-// TODO: add tests
-// TODO: add readme
-
 function App() {
   return (
     <>
