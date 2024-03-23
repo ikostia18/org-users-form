@@ -1,11 +1,12 @@
 import React from 'react';
-import { Autocomplete, Checkbox, TextField } from '@mui/material';
+import { Autocomplete, AutocompleteRenderOptionState, Checkbox, TextField } from '@mui/material';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { SelectItem } from '../../utils/types';
 import { styled as muiStyled } from '@mui/material/styles';
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
+import ListboxComponent, { StyledPopper } from './ListBoxItem';
 
 const StyledWrapper = muiStyled('div')<StyledWrapperProps>(({ theme, width }) => ({
   width: width || '100%',
@@ -25,7 +26,6 @@ interface StyledWrapperProps {
 }
 
 // TODO: add the number of selected with the search option
-// TODO: handle the performance issue of many users
 
 const MultiSelect: React.FC<MultiSelectProps> = ({
   items,
@@ -35,6 +35,17 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   width,
 }) => {
 
+  // *** 1st APPROACH AND MORE ELEGANT TO HANDLE PERFORMANCE ISSUES ***
+  // const filterOptions = createFilterOptions({
+  //   matchFrom: 'any',
+  //   limit: 100,
+  // });
+  // + add props ot AutoComplete filterOptions={filterOptions}
+
+  // *** 2nd APPROACH TO HANDLE PERFORMANCE ISSUES ***
+  // *** IS TO USE REACT WINDOW (IMPLEMENTED IN ListboxComponent) ***
+  // *** IS TO USE REACT WINDOW (IMPLEMENTED IN ListboxComponent) ***
+
   return (
     <StyledWrapper width={width}>
       <Autocomplete
@@ -43,32 +54,62 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
         disableCloseOnSelect
         getOptionLabel={(option) => option.label}
 
-        renderOption={(props, option, { inputValue, selected }) => {
+        ListboxComponent={ListboxComponent}
+        PopperComponent={StyledPopper}
+
+        // renderOption returns new type to handle the react-window adapter 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        renderOption={(props, option, { inputValue, index, selected }: AutocompleteRenderOptionState) => {
           const matches = match(option.label, inputValue, { insideWords: true });
           const parts = parse(option.label, matches);
 
-          return (
-            <li {...props}>
-              <div>
-                <Checkbox
-                  icon={<CheckBoxOutlineBlankIcon />}
-                  checkedIcon={<CheckBoxIcon />}
-                  style={{ marginRight: 8 }}
-                  checked={selected}
-                />
-                {parts.map((part, index) => (
-                  <span
-                    key={index}
-                    style={{
-                      fontWeight: part.highlight ? 900 : 400,
-                    }}
-                  >
-                    {part.text}
-                  </span>
-                ))}
-              </div>
-            </li>
-          );
+          const optionToReturn = <li {...props}>
+            <div>
+              <Checkbox
+                icon={<CheckBoxOutlineBlankIcon />}
+                checkedIcon={<CheckBoxIcon />}
+                style={{ marginRight: 6 }}
+                checked={selected}
+              />
+              {parts.map((part, index) => (
+                <span
+                  key={index}
+                  style={{
+                    fontWeight: part.highlight ? 900 : 400,
+                  }}
+                >
+                  {part.text}
+                </span>
+              ))}
+            </div>
+          </li>;
+
+          return [props, optionToReturn, index];
+
+          // WITHOUT REACT WINDOW + REMOVE ListboxComponent & PopperComponent 
+          // return (
+          //   <li {...props}>
+          //     <div>
+          //       <Checkbox
+          //         icon={<CheckBoxOutlineBlankIcon />}
+          //         checkedIcon={<CheckBoxIcon />}
+          //         style={{ marginRight: 8 }}
+          //         checked={selected}
+          //       />
+          //       {parts.map((part, index) => (
+          //         <span
+          //           key={index}
+          //           style={{
+          //             fontWeight: part.highlight ? 900 : 400,
+          //           }}
+          //         >
+          //           {part.text}
+          //         </span>
+          //       ))}
+          //     </div>
+          //   </li>
+          // );
         }}
 
         value={selectedItems}
