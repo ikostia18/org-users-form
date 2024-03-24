@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { SESSION_STORAGE_KEY } from '../../utils/consts.ts';
 import Button from '../../components/Button/index.tsx';
 
@@ -70,10 +70,10 @@ const HomePage = () => {
     }
   }, []);
 
-  const handleClearSession = () => {
+  const handleClearSession = useCallback(() => {
     sessionStorage.removeItem(SESSION_STORAGE_KEY);
     setSubscriptionData(null);
-  };
+  }, []);
 
   return (
     <HomePageContainer>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Modal, { ModalRef } from '../../components/Modal/index.tsx';
 import data from '../../mocks/data.json';
@@ -66,16 +66,16 @@ const SubscribePage = () => {
       label: `${user.firstName} ${user.lastName}`
     })), [data.users, selectedOrg]);
 
-  const handleOrgSelect = (orgId: string) => {
+  const handleOrgSelect = useCallback((orgId: string) => {
     const selectedOrg = organizationItems.find(org => org.id === orgId);
     if (selectedOrg) {
       setSelectedOrg({ id: selectedOrg.id, label: selectedOrg.label });
     }
-  };
+  }, [organizationItems]);
 
-  const handleUsersSelect = (selectedItems: SelectItem[]) => {
+  const handleUsersSelect = useCallback((selectedItems: SelectItem[]) => {
     setSelectedUsersIds(selectedItems);
-  };
+  }, [userItems]);
 
   const handleSubmit = () => {
     // LocalStorage can be in used as well
